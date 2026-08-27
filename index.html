@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#121417">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="LiftVault">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>LiftVault Workout Tracker</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <svg class="icon-defs" aria-hidden="true" focusable="false">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11.2 12 4l8 7.2V20a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1v-8.8Z"/></symbol>
+    <symbol id="i-log" viewBox="0 0 24 24"><path d="M5 4h14v16H5V4Zm3 4h8M8 12h8M8 16h5"/></symbol>
+    <symbol id="i-routine" viewBox="0 0 24 24"><path d="M4 5h16v4H4V5Zm0 10h16v4H4v-4Zm2-4h12"/></symbol>
+    <symbol id="i-library" viewBox="0 0 24 24"><path d="M5 4h10a4 4 0 0 1 4 4v12H9a4 4 0 0 1-4-4V4Zm4 4h6M9 12h6"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 19h16M7 16V9m5 7V5m5 11v-4"/></symbol>
+    <symbol id="i-body" viewBox="0 0 24 24"><path d="M12 5a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-5 8 5-2 5 2m-5-2v9m-3-4-2 4m8-4 2 4"/></symbol>
+    <symbol id="i-feed" viewBox="0 0 24 24"><path d="M5 5h14v10H8l-3 4V5Zm4 4h6m-6 3h8"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm0-5v3m0 12v3M4.2 6.2l2.1 2.1m11.4 7.4 2.1 2.1M3 12h3m12 0h3M4.2 17.8l2.1-2.1m11.4-7.4 2.1-2.1"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9.2-8.3C.9 8.4 2.8 5 6.3 5c2 0 3.2 1 3.9 2.1C10.8 6 12.1 5 14.1 5c3.5 0 5.4 3.4 3.5 6.7C15.4 15.6 12 20 12 20Z"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9Zm-8 12h4"/></symbol>
+    <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 21h8m-4-4v4M7 4h10v5a5 5 0 0 1-10 0V4Zm0 2H4v2a3 3 0 0 0 3 3m10-5h3v2a3 3 0 0 1-3 3"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7L8 5Z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><path d="M12 6v6l4 2m5-2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><path d="m20 20-4.5-4.5M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><path d="M8 12h8M13 7l5 5-5 5M4 5v14"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v10m-4-4 4 4 4-4M5 20h14"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 20V10m-4 4 4-4 4 4M5 4h14"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M5 7h14M9 7V5h6v2m-8 0 1 13h8l1-13M10 11v5m4-5v5"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  </svg>
+
+  <div class="shell">
+    <header class="topbar">
+      <button class="brand" data-view="dashboard" aria-label="Open dashboard">
+        <img src="icons/icon.svg" alt="" width="42" height="42">
+        <span>
+          <strong>LiftVault</strong>
+          <small id="syncStatus">Saved on this device</small>
+        </span>
+      </button>
+      <nav class="desktop-nav" id="desktopNav" aria-label="Main navigation"></nav>
+      <div class="top-actions">
+        <button class="icon-button" id="installBtn" type="button" hidden aria-label="Add to Home Screen">
+          <svg><use href="#i-download"></use></svg>
+        </button>
+        <button class="command primary" id="quickStartBtn" type="button">
+          <svg><use href="#i-play"></use></svg>
+          <span>Start</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="view active" id="view-dashboard" aria-labelledby="dashboardTitle">
+        <div class="home-greeting">
+          <div class="profile-orb" id="homeInitials">LV</div>
+          <div>
+            <p>Hello, <strong id="homeName">You</strong></p>
+            <h1 id="dashboardTitle">Today's Activity</h1>
+          </div>
+          <button class="round-button notify-dot" type="button" aria-label="Notifications">
+            <svg><use href="#i-bell"></use></svg>
+          </button>
+        </div>
+        <div class="challenge-card">
+          <div>
+            <span class="soft-badge"><svg><use href="#i-trophy"></use></svg> Challenge</span>
+            <h2>Challenge With Pro Coach</h2>
+            <p>Build momentum with a focused session, timer, and measurable set goals.</p>
+            <button class="play-pill" id="homeChallengeStart" data-action="start-empty" type="button">
+              Get Started
+              <span><svg><use href="#i-play"></use></svg></span>
+            </button>
+          </div>
+          <div class="coach-figure" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+        <div class="activity-rail" id="activityTypes"></div>
+        <div class="calendar-card">
+          <div class="month-pill" id="homeMonth">This month</div>
+          <div class="calendar-strip" id="homeCalendarStrip"></div>
+        </div>
+        <div class="stats-grid" id="dashboardStats"></div>
+        <section class="panel gain-plan-panel" id="gainPlanPanel" aria-labelledby="gainPlanTitle"></section>
+        <div class="dashboard-layout">
+          <section class="panel focus-panel" aria-labelledby="activeTitle">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Live</p>
+                <h2 id="activeTitle">Active workout</h2>
+              </div>
+              <button class="mini-command" data-view="logger" type="button">Open log</button>
+            </div>
+            <div id="activeWorkoutSummary"></div>
+          </section>
+          <section class="panel" aria-labelledby="nextTitle">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Plan</p>
+                <h2 id="nextTitle">Quick start</h2>
+              </div>
+            </div>
+            <div class="stack" id="quickRoutines"></div>
+          </section>
+        </div>
+        <section class="panel diary-panel" aria-labelledby="diaryTitle">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Diary</p>
+              <h2 id="diaryTitle">Workout diary</h2>
+            </div>
+            <button class="round-button" data-action="add-exercise-active" type="button" aria-label="Add exercise">
+              <svg><use href="#i-plus"></use></svg>
+            </button>
+          </div>
+          <div class="segmented">
+            <button class="active" type="button">Practise</button>
+            <button type="button">Timer</button>
+            <button type="button">Check in</button>
+          </div>
+          <div id="workoutDiarySummary"></div>
+        </section>
+        <div class="feature-widget-grid">
+          <section class="panel dark-widget" aria-labelledby="heartWidgetTitle">
+            <div id="heartWidget"></div>
+          </section>
+          <section class="panel progress-matrix-card" aria-labelledby="matrixTitle">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Progress</p>
+                <h2 id="matrixTitle">Training matrix</h2>
+              </div>
+            </div>
+            <div class="progress-matrix" id="dashboardProgressMatrix"></div>
+          </section>
+        </div>
+        <div class="dashboard-layout">
+          <section class="panel" aria-labelledby="recentTitle">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">History</p>
+                <h2 id="recentTitle">Recent workouts</h2>
+              </div>
+              <button class="mini-command" data-view="feed" type="button">Feed</button>
+            </div>
+            <div class="stack" id="recentWorkouts"></div>
+          </section>
+          <section class="panel" aria-labelledby="timerTitle">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Rest</p>
+                <h2 id="timerTitle">Timer</h2>
+              </div>
+            </div>
+            <div class="timer-card">
+              <strong id="timerDisplay">00:00</strong>
+              <span id="timerLabel">Ready</span>
+            </div>
+            <div class="button-row">
+              <button class="command" data-timer="90" type="button"><svg><use href="#i-clock"></use></svg>90s</button>
+              <button class="command" data-timer="150" type="button"><svg><use href="#i-clock"></use></svg>150s</button>
+              <button class="command ghost" id="timerReset" type="button">Reset</button>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="view-logger" aria-labelledby="loggerTitle">
+        <div class="view-head">
+          <div>
+            <p class="eyebrow">Logbook</p>
+            <h1 id="loggerTitle">Workout logger</h1>
+          </div>
+          <div class="head-actions">
+            <button class="command" data-action="add-exercise-active" type="button">
+              <svg><use href="#i-plus"></use></svg>
+              Exercise
+            </button>
+            <button class="command primary" data-action="finish-workout" type="button">
+              <svg><use href="#i-check"></use></svg>
+              Finish
+            </button>
+          </div>
+        </div>
+        <div id="loggerView"></div>
+      </section>
+
+      <section class="view" id="view-routines" aria-labelledby="routinesTitle">
+        <div class="view-head">
+          <div>
+            <p class="eyebrow">Planner</p>
+            <h1 id="routinesTitle">Routines</h1>
+          </div>
+          <div class="head-actions">
+            <button class="command" data-action="new-routine" type="button">
+              <svg><use href="#i-plus"></use></svg>
+              Routine
+            </button>
+          </div>
+        </div>
+        <section class="panel program-overview" id="programOverview" aria-labelledby="programTitle"></section>
+        <div class="routine-grid" id="routineList"></div>
+      </section>
+
+      <section class="view" id="view-library" aria-labelledby="libraryTitle">
+        <div class="view-head">
+          <div>
+            <p class="eyebrow">Exercises</p>
+            <h1 id="libraryTitle">Library</h1>
+          </div>
+          <div class="head-actions">
+            <button class="command" data-action="custom-exercise" type="button">
+              <svg><use href="#i-plus"></use></svg>
+              Custom
+            </button>
+          </div>
+        </div>
+        <div class="toolbar">
+          <label class="search-box">
+            <svg><use href="#i-search"></use></svg>
+            <input id="exerciseSearch" type="search" placeholder="Search exercises">
+          </label>
+          <select id="muscleFilter" aria-label="Filter by muscle"></select>
+          <select id="equipmentFilter" aria-label="Filter by equipment"></select>
+        </div>
+        <div class="exercise-grid" id="exerciseGrid"></div>
+      </section>
+
+      <section class="view" id="view-progress" aria-labelledby="progressTitle">
+        <div class="view-head">
+          <div>
+            <p class="eyebrow">Analytics</p>
+            <h1 id="progressTitle">Progress</h1>
+          </div>
+        </div>
+        <div class="stats-grid" id="progressStats"></div>
+        <div class="progress-grid">
+          <section class="panel wide" aria-labelledby="volumeTitle">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Volume</p>
+                <h2 id="volumeTitle">Last 8 weeks</h2>
+              </div>
+            </div>
+            <div class="chart-bars" id="volumeChart"></div>
+          </section>
+          <section class="panel" aria-labelledby="muscleTitle">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Balance</p>
+                <h2 id="muscleTitle">Muscle sets</h2>
+              </div>
+            </div>
+            <div id="muscleChart"></div>
+          </section>
+          <section class="panel" aria-labelledby="trendTitle">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Exercise</p>
+                <h2 id="trendTitle">Trend</h2>
+              </div>
+              <select id="trendExercise"></select>
+            </div>
+            <div class="chart-bars" id="exerciseTrend"></div>
+          </section>
+          <section class="panel" aria-labelledby="calendarTitle">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Consistency</p>
+                <h2 id="calendarTitle">Calendar</h2>
+              </div>
+            </div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="view-body" aria-labelledby="bodyTitle">
+        <div class="view-head">
+          <div>
+            <p class="eyebrow">Composition</p>
+            <h1 id="bodyTitle">Body scan</h1>
+          </div>
+        </div>
+        <div class="body-summary-grid" id="bodySummary"></div>
+        <div class="body-layout">
+          <section class="panel body-scan-panel" aria-labelledby="metricTitle">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Check-in</p>
+                <h2 id="metricTitle">Composition machine scan</h2>
+              </div>
+            </div>
+            <form class="form-grid" id="metricForm">
+              <label>Scan date <input name="scanDate" type="date"></label>
+              <label>Machine / location <input name="machine" placeholder="InBody, Tanita, gym scan"></label>
+              <div class="body-form-sections" id="bodyMetricInputs"></div>
+              <label class="full">Scan notes <textarea name="notes" placeholder="Hydration, meal timing, training yesterday, menstrual cycle, anything that may affect the scan"></textarea></label>
+              <button class="command primary" type="submit"><svg><use href="#i-check"></use></svg>Save scan</button>
+            </form>
+          </section>
+          <section class="panel" aria-labelledby="photoTitle">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Photos</p>
+                <h2 id="photoTitle">Progress photos</h2>
+              </div>
+            </div>
+            <label class="file-drop">
+              <input id="photoInput" type="file" accept="image/*">
+              <span>Upload progress photo</span>
+            </label>
+            <div class="photo-grid" id="photoGrid"></div>
+          </section>
+        </div>
+        <section class="panel" aria-labelledby="segmentTitle">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Machine detail</p>
+              <h2 id="segmentTitle">Segmental analysis</h2>
+            </div>
+          </div>
+          <div class="segment-grid" id="segmentGrid"></div>
+        </section>
+        <section class="panel" aria-labelledby="metricHistoryTitle">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">History</p>
+              <h2 id="metricHistoryTitle">Composition trend</h2>
+            </div>
+            <select id="bodyMetricTrend" aria-label="Body metric trend"></select>
+          </div>
+          <div class="chart-bars" id="bodyChart"></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Date</th><th>Weight</th><th>Body fat %</th><th>Muscle mass</th><th>Fat mass</th><th>Visceral fat</th><th>Water</th><th>BMR</th><th>Notes</th></tr></thead>
+              <tbody id="metricRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section class="view" id="view-feed" aria-labelledby="feedTitle">
+        <div class="view-head">
+          <div>
+            <p class="eyebrow">Social</p>
+            <h1 id="feedTitle">Local feed</h1>
+          </div>
+          <div class="head-actions">
+            <button class="command" data-action="import-share" type="button">
+              <svg><use href="#i-upload"></use></svg>
+              Import
+            </button>
+          </div>
+        </div>
+        <div class="feed-layout">
+          <section class="panel profile-panel" id="profilePanel"></section>
+          <section class="feed-list" id="feedList"></section>
+        </div>
+      </section>
+
+      <section class="view" id="view-settings" aria-labelledby="settingsTitle">
+        <div class="view-head">
+          <div>
+            <p class="eyebrow">Device</p>
+            <h1 id="settingsTitle">Settings</h1>
+          </div>
+        </div>
+        <div class="settings-grid">
+          <section class="panel" aria-labelledby="profileTitle">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Profile</p>
+                <h2 id="profileTitle">Training identity</h2>
+              </div>
+            </div>
+            <form class="form-grid" id="profileForm">
+              <label>Name <input name="name" placeholder="Your name"></label>
+              <label>Goal <input name="goal" placeholder="Strength, muscle, recomposition"></label>
+              <label>Weekly target <input name="weeklyTarget" type="number" min="1" max="14"></label>
+              <button class="command primary" type="submit"><svg><use href="#i-check"></use></svg>Save profile</button>
+            </form>
+          </section>
+          <section class="panel" aria-labelledby="preferencesTitle">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Preferences</p>
+                <h2 id="preferencesTitle">Units and timer</h2>
+              </div>
+            </div>
+            <form class="form-grid" id="settingsForm">
+              <label>Unit
+                <select name="unit">
+                  <option value="kg">kg</option>
+                  <option value="lb">lb</option>
+                </select>
+              </label>
+              <label>Default rest
+                <input name="restSeconds" type="number" min="15" step="15">
+              </label>
+              <label>Workout privacy
+                <select name="privacy">
+                  <option value="private">Private</option>
+                  <option value="shareable">Shareable</option>
+                </select>
+              </label>
+              <button class="command primary" type="submit"><svg><use href="#i-check"></use></svg>Save settings</button>
+            </form>
+          </section>
+          <section class="panel" aria-labelledby="dataTitle">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Backup</p>
+                <h2 id="dataTitle">Data tools</h2>
+              </div>
+            </div>
+            <div class="button-grid">
+              <button class="command" data-action="export-data" type="button"><svg><use href="#i-download"></use></svg>Export backup</button>
+              <button class="command" data-action="import-data" type="button"><svg><use href="#i-upload"></use></svg>Import backup</button>
+              <button class="command danger" data-action="reset-data" type="button"><svg><use href="#i-trash"></use></svg>Reset app</button>
+            </div>
+          </section>
+          <section class="panel" aria-labelledby="installTitle">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Home screen</p>
+                <h2 id="installTitle">Install</h2>
+              </div>
+            </div>
+            <div class="install-card">
+              <img src="icons/icon.svg" alt="" width="72" height="72">
+              <div>
+                <strong>LiftVault</strong>
+                <p>Add the app from your browser menu, or use the install button when your browser shows it.</p>
+              </div>
+            </div>
+            <button class="command primary full" id="settingsInstallBtn" type="button"><svg><use href="#i-download"></use></svg>Add to Home Screen</button>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" id="bottomNav" aria-label="Main navigation"></nav>
+  </div>
+
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="icon-button close-button" id="modalClose" type="button" aria-label="Close dialog">
+        <svg><use href="#i-close"></use></svg>
+      </button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
+  <input class="hidden-file" id="backupInput" type="file" accept="application/json">
+  <input class="hidden-file" id="shareInput" type="file" accept="application/json">
+  <script src="liftvault.js"></script>
+</body>
+</html>
